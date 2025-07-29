@@ -1,0 +1,202 @@
+{{ header }}
+<div class="container">
+  <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+      <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+  </ul>
+  {% if success %}
+    <div class="alert alert-success alert-dismissible"><i class="fa-solid fa-circle-check"></i> {{ success }}</div>
+  {% endif %}
+<div id="content">
+  <div class="container-fluid">
+    <div class="page-header">
+      <h1>{{ heading_title }}</h1>
+      <ol class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+          <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ol>
+    </div>
+
+    <div class="row">{{ column_left }}
+    <div id="content" class="col">{{ content_top }}
+      <!-- Filter Panel (Now Full Width) -->
+    <div class="card mb-3">
+      <div class="card-header">
+        <i class="fa-solid fa-filter"></i> {{ text_filter }}
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-2">
+            <label class="form-label" for="input-inquiry-id">{{ entry_inquiry_id }}</label>
+            <input type="text" name="filter_inquiry_id" value="{{ filter_inquiry_id }}" placeholder="{{ entry_inquiry_id }}" id="input-inquiry-id" class="form-control" />
+          </div>
+          <div class="col-md-2">
+            <label class="form-label" for="input-name">{{ entry_product }}</label>
+            <input type="text" name="filter_product" value="{{ pname }}" placeholder="{{ entry_product }}" id="input-name" data-oc-target="autocomplete-name" class="form-control" autocomplete="off" />
+            <ul id="autocomplete-name" class="dropdown-menu"></ul>
+            <input type="hidden" name="product_id" value="{{ filter_product }}" />
+          </div>
+          <div class="col-md-2">
+            <label class="form-label" for="input-author">{{ entry_name }}</label>
+            <input type="text" name="filter_enqname" value="{{ filter_enqname }}" placeholder="{{ entry_name }}" id="input-author" data-oc-target="autocomplete-author" class="form-control" autocomplete="off" />
+            <ul id="autocomplete-author" class="dropdown-menu"></ul>
+            <input type="hidden" name="inquiry_id" value="{{ filter_product }}" />
+          </div>
+          <div class="col-md-2">
+            <label class="form-label" for="input-name">{{ entry_vendor }}</label>
+            <input type="text" name="filter_vendor" value="{{ sellername }}" placeholder="{{ entry_vendor }}" id="input-name" data-oc-target="autocomplete-sellername" class="form-control" autocomplete="off" />
+            <ul id="autocomplete-sellername" class="dropdown-menu"></ul>
+            <input type="hidden" name="vendor_id" value="{{ filter_vendor }}" />
+          </div>
+         
+          <div class="col-md-2">
+            <label for="input-date-added" class="form-label">{{ entry_date_added }}</label>
+            <div class="input-group">
+              <input type="text" name="filter_date_added" value="{{ filter_date_added }}" placeholder="{{ entry_date_added }}" id="input-date-added" class="form-control date"/>
+              <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+            </div>
+          </div>
+
+          <div class="col-md-2 d-flex align-items-end">
+            <button type="button" id="button-filter" class="btn btn-primary w-100"><i class="fa fa-filter"></i> {{ text_filter }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact List Table -->
+    <div class="card">
+      <div class="card-header">
+        <i class="fa-solid fa-list"></i> {{ text_list }}
+      </div>
+      <div id="enquiry" class="card-body">
+        {{ list }}
+      </div>
+    </div>
+      {{ content_bottom }}</div>
+    {{ column_right }}</div>
+
+    
+  </div>
+</div>
+</div>
+
+<script type="text/javascript"><!--
+$('#enquiry').on('click', 'thead a, .pagination a', function (e) {
+    e.preventDefault();
+
+    $('#enquiry').load(this.href);
+});
+
+$('#button-filter').on('click', function () {
+    url = '';
+
+    var filter_inquiry_id = $('#input-inquiry-id').val();
+
+    if (filter_inquiry_id) {
+      url += '&filter_inquiry_id=' + encodeURIComponent(filter_inquiry_id);
+    }
+          
+    var filter_product = $('input[name=\'product_id\']').val();
+    
+    if (filter_product) {
+      url += '&filter_product=' + encodeURIComponent(filter_product);
+    }
+    
+    var filter_vendor = $('input[name=\'filter_vendor\']').val();
+    
+    if (filter_vendor) {
+      url += '&filter_vendor=' + encodeURIComponent(filter_vendor);
+    }
+
+    var filter_enqname = $('input[name=\'filter_enqname\']').val();
+
+    if (filter_enqname) {
+        url += '&filter_enqname=' + filter_enqname;
+    }
+
+    var filter_date_added = $('#input-date-added').val();
+
+    if (filter_date_added) {
+        url += '&filter_date_added=' + encodeURIComponent(filter_date_added);
+    }
+
+    $('#enquiry').load('index.php?route=extension/tmdvendorcustomercommunication/account/message|list&language={{ language }}' + url);
+});
+</script>
+<script type="text/javascript">
+$('input[name=\'filter_product\']').autocomplete({
+  'source': function(request, response) {
+    $.ajax({
+      url: 'index.php?route=extension/tmdmultivendor/vendor/product|autocomplete&filter_name=' +  encodeURIComponent(request),
+      dataType: 'json',
+      success: function(json) {
+        json.unshift({
+          product_id: 0,
+          name:'{{ text_none }}'
+        });
+        response($.map(json, function(item) {
+          return {
+            label: item['name'],
+            value: item['product_id']
+          }
+        }));
+      }
+    });
+  },
+  'select': function(item) {
+    $('input[name=\'filter_product\']').val(item['label']);
+    $('input[name=\'product_id\']').val(item['value']);
+  }
+});
+//Enquirer Name
+$('input[name=\'filter_enqname\']').autocomplete({
+  'source': function(request, response) {
+    $.ajax({
+      url: 'index.php?route=extension/tmdvendorcustomercommunication/account/message|autocomplete&filter_enqname=' +  encodeURIComponent(request),
+      dataType: 'json',
+      success: function(json) {
+        response($.map(json, function(item) {
+          return {
+            label: item['name'],
+            value: item['inquiry_id']
+          }
+        }));
+      }
+    });
+  },
+  'select': function(item) {
+    $('input[name=\'filter_enqname\']').val(item['label']);
+    $('input[name=\'inquiry_id\']').val(item['value']);
+  }
+});
+
+$('input[name=\'filter_vendor\']').autocomplete({
+  'source': function(request, response) {
+    $.ajax({
+      url: 'index.php?route=extension/tmdvendorcustomercommunication/account/message|vendorautocomplete&filter_vendor=' +  encodeURIComponent(request),
+      dataType: 'json',
+      success: function(json) {
+        json.unshift({
+          vendor_id: 0,
+          name:'{{ text_none }}'
+        });
+
+        response($.map(json, function(item) {
+          return {
+            label: item['name'],
+            value: item['vendor_id']
+          }
+        }));
+      }
+    });
+  },
+  'select': function(item) {
+    $('input[name=\'filter_vendor\']').val(item['label']);
+    $('input[name=\'vendor_id\']').val(item['value']);
+  }
+});
+</script>
+{{ footer }}

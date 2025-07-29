@@ -1,0 +1,248 @@
+{{ header }}{{ column_left }}
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="float-end">
+				<a href="{{ invoice }}" target="_blank" data-bs-toggle="tooltip" title="{{ button_invoice_print }}" class="btn btn-info"><i class="fa fa-print"></i></a>
+			</div>
+			<h1>{{ heading_view }}</h1>
+			<ol class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+				<li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ol>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="card">
+				<div class="card-header"><i class="fas fa-filter"></i> {{ text_view }}(#{{ order_id }})</div>
+				<div class="card-body">
+					  
+					<form action="" method="post" enctype="multipart/form-data" id="form-information">
+						<div class="table-responsive overflow-x-auto text-nowrap">
+							<table class="table table-bordered table-hover">
+								<thead>
+									<tr>
+										<td class="text-start" colspan="2">{{ text_details }}</td>
+									 </tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="text-start"><b>{{ text_order }}</b>: #{{ order_id }}</td>
+										<td class="text-start"><b>{{ text_Payment }}</b>: {{ payment_method }}</td>
+									</tr>
+									<tr>
+										<td class="text-start"><b>{{ text_date }}</b>: {{ date_added }}</td>
+										<td class="text-start"><b>{{ text_shipping }}</b>: {{ shipping_method }}</td>
+									</tr>
+								</tbody>
+							</table>
+							<div class="table-responsive overflow-x-auto text-nowrap">
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<td style="width: 50%;" class="text-start">{{ text_payment_address }}</td>
+										{% if shipping_method %}
+										<td style="width: 50%;" class="text-start">{{ text_shipping_address }}
+										{% endif %}</td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="text-start">{{ payment_address }}</td>
+										{% if shipping_method %}
+										<td class="text-start">{{ shipping_address }}</td>
+										{% endif %}
+									</tr>
+								</tbody>
+							</table>
+							</div>
+							<br/>
+							<br/>
+							<div class="clearfix">
+							<div class="table-responsive overflow-x-auto text-nowrap">
+							<table class="table table-bordered table-hover">
+								<thead>
+									<tr>
+										<td class="text-start">{{ column_product }}</td>
+										<td class="text-start">{{ column_model }}</td>
+										<td class="text-center">{{ column_quantity }}</td>
+										
+										<td class="text-center {{ trackingcode }}">{{ column_tracking }}</td>
+										{% if chkshipcost==1 %}
+										<td class="text-center">{{ column_shipingamount }}</td>
+										{% endif %}
+										<td class="text-center">{{ column_price }}</td>
+										<td class="text-center">{{ column_total }}</td>
+									</tr>
+								</thead>
+								<tbody>
+									{% for product in products %}
+									<tr>
+									   <td class="text-start"><a href="{{ product.href }}">{{ product.name }}</a>
+										{% if product.sellername %} {{ text_byseller }}{% endif %}
+										
+										<a href="{{ product.sellerhref }}">{{ product.sellername }}</a>
+										{% for option in product.option %} <br />
+										  {% if option.type != 'file' %}
+										  &nbsp;<small> - {{ option.name }}: {{ option.value }}</small> {% else %}
+										  &nbsp;<small> - {{ option.name }}: <a href="{{ option.href }}">{{ option.value }}</a></small> {% endif %}
+										{% endfor %}
+										</td>
+										<td class="text-start">{{ product.model }}</td>
+										<td class="text-center">{{ product.quantity }}</td>
+									   
+										<td class="text-center {{ trackingcode }}">
+											<span class="track">{{ product.tracking }}</span>
+										</td>
+										{% if chkshipcost==1 %}
+										<td class="text-center">{{ product.tmdshippingcost }}</td>
+										{% endif %}
+										<td class="text-center">{{ product.price }}</td>
+										<td class="text-center">{{ product.total }}</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+							</div>
+							<div class="card">
+								<div class="card-header">
+									<h3 class="card-title"><i class="fa fa-comment-o"></i> {{ text_history }}</h3>
+								</div>
+								
+								<div class="table-responsive overflow-x-auto text-nowrap">
+									<table class="table table-bordered table-hover">
+										<thead>
+											<tr>
+												<td class="text-start">{{ column_date }}</td>
+												<td class="text-start">{{ column_status }}</td>
+												<td class="text-start">{{ column_productname }}</td>	
+												<td class="text-start">{{ column_updatedstatus }}</td>	
+												<td class="text-start">{{ column_comment }}</td>	
+											</tr>
+										</thead>
+										<tbody>
+										  {% if histories %}
+										  {% for history in histories %}
+										  <tr>
+											<td class="text-start">{{ history.date_added }}</td>				        
+											<td class="text-start">{{ history.status }}</td>	
+											<td class="text-start">{{ history.productname }}</td>
+											<td class="text-start">{{ history.updatedstatus }}</td>
+											<td class="text-start">{{ history.comment }}</td>
+										  </tr>
+										  {% endfor %}
+										  {% else %}
+										  <tr>
+												<td class="text-center" colspan="5">{{ text_no_results }}</td>
+										  </tr>
+										  {% endif %}
+										</tbody>
+									</table>			
+								</div>			
+							</div>			
+						</div>				
+						<div class="row">
+						  <div class="col-sm-6 text-start">{{ pagination }}</div>
+						  <div class="col-sm-6 text-end">{{ results }}</div>
+						</div>		
+					</form>
+				  </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+  $( ".btnNewGroups" ).click(function() {
+    rel=$(this).attr('rel');
+    rel1=$(this).attr('rel1');
+    rel2=$(this).attr('rel2');
+	/* 15-06-2019 */
+	 rel3=$(this).attr('rel3');
+    rel4=$(this).attr('rel4');
+	/* 15-06-2019 */
+
+    html  ='<div class="input-group statuss'+rel2+'">';
+    html +='<div class="input-group id="statusname+rel+">';
+	html +='<select name="order_status_id" class="form-control" id="selectstatu'+rel2+'">';
+	
+     {% for order_status in order_statuss %}
+     html += '<option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>';
+     {% endfor %}
+   	html += '</select>';
+
+	html +='</div>';
+   /* 15-06-2019 rel3, rel4 */
+    html +='<input type="hidden" name="order_product_id" id="order_product_id+rel2+" value="'+rel2+'" />';
+	html +='<input type="hidden" name="order_id" id="order_id+rel3+" value="'+rel3+'" />';
+    html +='<input type="hidden" name="vendor_id" id="vendor_id+rel4+" value="'+rel4+'" />';
+    html +=' <span class="input-group-btn"><button class="btn btn-light tracks" rel2='+rel2+' rel='+rel+' type="button">Save</button></span></div></div>';
+    $('#edit'+rel).html(html);
+  });
+</script>
+
+<script type="text/javascript">
+$(document).on('click','.tracks',function(){
+	rel=$(this).attr('rel');
+	rel2=$(this).attr('rel2');
+	
+	$.ajax({
+	url: 'index.php?route=extenstion/tmdmultivendor/vendor/report|addorderstatus&user_token={{ user_token }}&order_product_id='+rel2,
+	type:'post',
+	dataType:'json',
+	data: $('.statuss'+rel2+' select,.statuss'+rel2+' hidden'),
+		beforeSend: function() {
+	},
+	success: function(json) {
+		if (json['success']) {
+		  html='<i  class="btnNewGroup fa fa-edit"> <span class="track">'+json['statusname']+'</span></i>';
+		  $('#edit'+json['order_product_id']).html(html);
+		}
+		setTimeout(function(e){ $('.close').trigger('click');location.reload();},1000);	
+	}
+});
+});
+
+
+</script>
+
+<script type="text/javascript">
+$( ".btnNewtracking" ).click(function() {
+	rel=$(this).attr('rel');
+	rel1=$(this).attr('rel1');
+	rel2=$(this).attr('rel2');
+	html  ='<div class="input-group addtrack'+rel2+'">';
+	html +='<input type="text" name="tracking" id="tracking+rel+" value="'+rel1+'" class="form-control"/>';
+	//html +='<input type="hidden" name="product_id" id="product_id+rel+" value="'+rel+'"/>';
+	html +='<input type="hidden" name="order_product_id" id="order_product_id+rel2+" value="'+rel2+'"/>';
+	html +=' <span class="input-group-btn"><button class="btn btn-light trackss" rel2='+rel2+' type="button">Save</button></span></div></div>';
+	$('#trackedit'+rel).html(html);
+});
+
+/* 07-06-2019 update order_id to order_product_id */
+$(document).on('click','.trackss',function(){	
+	rel=$(this).attr('rel');
+	rel2=$(this).attr('rel2');
+
+	$.ajax({
+	url: 'index.php?route=extenstion/tmdmultivendor/vendor/report|addtrack&user_token={{ user_token }}&order_product_id='+rel2,
+	type:'post',
+	dataType:'json',
+	data: $('.addtrack'+rel2+' input,.addtrack'+rel2+' hidden'),
+		beforeSend: function() {
+	},
+	success: function(json) {
+		if (json['success']) {
+		  html='<i  class="btnNewtracking fa fa-edit"> <span class="track">'+json['tracking']+'</span></i>';
+		  $('#trackedit'+json['product_id']).html(html);
+		}
+		setTimeout(function(e){ $('.close').trigger('click');location.reload();},500);	
+	}
+});
+});
+</script>
+<!--// 15 2 2019 //-->
+{{ footer }}

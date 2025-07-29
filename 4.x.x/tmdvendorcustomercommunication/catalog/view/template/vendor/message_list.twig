@@ -1,0 +1,51 @@
+<form id="form-inquiry" method="post" data-oc-toggle="ajax" data-oc-load="{{ action }}" data-oc-target="#inquiry">
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped">
+      <thead>
+        <tr>         
+            <td class="text-start bgc1">{{ column_inquiry_id}}</td>
+            <td class="text-start bgc1">{{ column_name }}</td>
+            <td class="text-start bgc1">{{ column_product }}</td>
+            <td class="text-start bgc1">{{ column_customer }}</td>
+            <td class="text-start bgc1">{{ column_description }} </td>
+            <td class="text-start bgc1">{{ column_date_added }}</td>
+            <td class="text-center bgc1">{{ column_action }}</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% if enquires %}
+                {% for enquiry in enquires %}
+                <tr>
+                  <td class="text-start">{{ enquiry.inquiry_id }}</td>
+                  <td class="text-start">{{ enquiry.name }}</td>
+                  <td class="text-start">{{ enquiry.pname }}</td>
+                  <td class="text-start"> {% if customer_info==1 %}
+                    {{ enquiry.cname }}<br/>
+                    {{ enquiry.email }}<br/>
+                    {{ enquiry.telephone }}
+                    {% else %}
+                    {{ enquiry.cname }}
+                    {% endif %}</td>
+                  <td class="text-start d-none">{{ enquiry.status }}</td>
+                  <td class="text-start">{{ enquiry.description }}</td>
+                  <td class="text-center"><span class="badge bg-info"><i class="fa fa-clock-o" aria-hidden="true"></i> {{ enquiry.date_added }}</span></td>
+                  <td class="text-start">{% if enquiry.customer_id %}
+                    <a href="{{ enquiry.view }}" data-toggle="tooltip" target="_blank" title="{{ button_view }}" class="btn btn-light"><i class="fa fa-eye"></i></a>
+                    {% else %}
+                    <a href="javascript:void(0);" data-toggle="tooltip" title="{{ button_view }}" class="btn btn-light"><i class="fa fa-eye"></i></a>
+                    {% endif %}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                  <td class="text-center" colspan="8">{{ text_no_results }}</td>
+                </tr>
+                {% endif %}
+      </tbody>
+    </table>
+  </div>
+  <div class="row">
+    <div class="col-sm-6 text-start">{{ pagination }}</div>
+    <div class="col-sm-6 text-end">{{ results }}</div>
+  </div>
+</form>

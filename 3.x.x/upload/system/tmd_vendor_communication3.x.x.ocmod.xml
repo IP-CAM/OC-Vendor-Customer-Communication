@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<name>Tmd Vendor Communication</name>
+	<version>1.0</version>
+	<code>#TVC</code>
+	<author>TMD(opencartextensions.in)</author>
+	<link>http://opencartextensions.in/</link>
+	
+<file path="admin/controller/common/column_left.php">
+	<operation error="skip">
+		<search><![CDATA[// Extension]]></search>
+		<add position="before"><![CDATA[
+		/* Tmd Vendor Communication */
+		$communication = array();
+		if ($this->user->hasPermission('access', 'extension/module/tmdcommunication_setting')) {
+			$communication[] = array(
+				'name'	   => $this->language->get('text_c_setting'),
+				'href'     => $this->url->link('extension/module/tmdcommunication_setting', 'user_token=' . $this->session->data['user_token'], true),
+				'children' => array()
+			);
+		}
+		if ($this->user->hasPermission('access', 'vendor/contact')) {
+			$communication[] = array(
+				'name'	   => $this->language->get('text_vendorcontact'),
+				'href'     => $this->url->link('vendor/contact', 'user_token=' . $this->session->data['user_token'], true),
+				'children' => array()
+			);
+		}
+
+		if ($communication) {
+			$data['menus'][] = array(
+				'id'       => 'menu-communication',
+				'icon'	   => 'fa-th-list fw',
+				'name'	   => $this->language->get('text_communication'),
+				'href'     => '',
+				'children' => $communication
+			);
+		}
+		/* Tmd Vendor Communication */
+		]]></add>
+	</operation>
+</file>
+<file path="admin/language/*/common/column_left.php">
+<operation error="skip">
+<search><![CDATA[// Text]]></search>
+<add position="after"><![CDATA[
+// Tmd Vendor Communication ///
+$_['text_communication']            = 'Tmd Vendor Contact';
+$_['text_vendorcontact']            = 'Contact List';
+$_['text_c_setting']            	= 'Contact Setting';
+// Tmd Vendor Communication ///
+]]></add>
+</operation>
+</file>
+
+<file path="catalog/controller/account/account.php">
+	<operation error="skip">
+		<search><![CDATA[$data['breadcrumbs'] = array();]]></search>
+		<add position="before"><![CDATA[
+		/* Tmd Vendor Communication */
+		$data['messagedetail'] = $this->url->link('account/message', '', true);
+		/* Tmd Vendor Communication */
+		]]></add>
+	</operation>
+</file>
+
+<file path="catalog/language/*/account/account.php">
+<operation error="skip">
+<search><![CDATA[// Text]]></search>
+<add position="after"><![CDATA[
+/* Tmd Vendor Communication */
+$_['text_my_messagedetail']= 'Vendor Contact';
+$_['text_messagedetail']   = 'Contact List';
+/* Tmd Vendor Communication */
+]]></add>
+</operation>
+</file>
+
+<file path="catalog/view/theme/default/template/account/account.twig">
+	<operation error="skip">
+		<search><![CDATA[{{ content_bottom }}</div>]]></search>
+		<add position="before"><![CDATA[
+			<!-- Tmd Vendor Communication-->
+			<h2>{{ text_my_messagedetail }}</h2>
+      <ul class="list-unstyled">
+        <li><a href="{{ messagedetail }}">{{ text_messagedetail }}</a></li>
+      </ul>
+			<!-- Tmd Vendor Communication-->
+		]]></add>
+	</operation>
+</file>
+<file path="catalog/view/theme/journal3/template/account/account.twig">
+	<operation error="skip">
+		<search><![CDATA[<li class="edit-recurring"><a href="{{ recurring }}">{{ text_recurring }}</a></li>]]></search>
+		<add position="after"><![CDATA[
+		<li class="messagedetail"><a href="{{ messagedetail }}">{{ text_messagedetail }}</a></li>
+		<style>
+		.account-list>.messagedetail>a::before {
+		    content: '\e969' !important;
+		    font-family: icomoon !important;
+		}
+		</style>
+		]]></add>
+	</operation> 
+</file>
+
+<file path="catalog/controller/extension/module/account.php">
+	<operation error="skip">
+		<search><![CDATA[$data['logged'] = $this->customer->isLogged();]]></search>
+		<add position="before"><![CDATA[
+		/* Tmd Vendor Communication */
+		$data['message'] = $this->url->link('account/message', '', true);
+		/* Tmd Vendor Communication */
+		]]></add>
+	</operation>
+</file>
+
+<file path="catalog/language/*/extension/module/account.php">
+<operation error="skip">
+<search><![CDATA[// Text]]></search>
+<add position="after"><![CDATA[
+/* Tmd Vendor Communication */
+$_['text_ven_contact']    = 'Vendor Contact';
+/* Tmd Vendor Communication */
+]]></add>
+</operation>
+</file>
+
+<file path="catalog/view/theme/*/template/extension/module/account.twig">
+	<operation error="skip">
+		<search index="1"><![CDATA[{% if logged %}]]></search>
+		<add position="after"><![CDATA[
+			<!-- Tmd Vendor Communication-->
+			<a href="{{ message }}" class="list-group-item">{{ text_ven_contact }}</a>
+			<!-- Tmd Vendor Communication-->
+		]]></add>
+	</operation>
+</file>
+
+<file path="catalog/controller/vendor/column_left.php">
+	<operation error="skip">
+		<search><![CDATA[$vendor_id = $this->vendor->getId();]]></search>
+		<add position="after"><![CDATA[
+			$data['message'] = $this->url->link('vendor/message', '',true);
+		]]></add>
+	</operation>
+</file>
+
+<file path="catalog/language/*/vendor/column_left.php">
+	<operation error="skip">
+		<search><![CDATA[// Text]]></search>
+		<add position="after"><![CDATA[
+			$_['text_message']                     = 'Contact List';
+		]]></add>
+	</operation>
+</file>
+
+<file path="catalog/view/theme/*/template/vendor/column_left.twig">
+	<operation error="skip">
+		<search><![CDATA[<li  id="enquiry"><a href="{{ enquiry }}"><i data-toggle="tooltip" title="{{ text_enquiry }}" class="fa fa-envelope" aria-hidden="true"></i><span>{{ text_enquiry }}</span></a></li>]]></search>
+		<add position="after"><![CDATA[
+			<!-- Tmd Vendor Communication-->
+			<li  id="enquiry"><a href="{{ message }}"><i data-toggle="tooltip" title="{{ text_message }}" class="fa fa-phone-square" aria-hidden="true"></i><span>{{ text_message }}</span></a></li>
+			<!-- Tmd Vendor Communication-->
+		]]></add>
+	</operation>
+</file>
+</modification>

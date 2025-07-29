@@ -1,0 +1,276 @@
+{{ header }}{{ column_left }}
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="float-end">
+				<button type="submit" form="form-tmdcommunication_setting" data-bs-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa-solid fa-save"></i></button>
+				<a href="{{ back }}" data-bs-toggle="tooltip" title="{{ button_back }}" class="btn btn-light"><i class="fa-solid fa-reply"></i></a></div>
+			<h1>{{ heading_title }}</h1>
+			<ol class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+				<li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ol>
+		</div>
+	</div>
+	{{ getkeyform }}
+	<div class="container-fluid">
+		<div class="card">
+			<div class="card-header"><i class="fa-solid fa-pencil"></i> {{ text_edit }}</div>
+			<div class="card-body">
+				<form id="form-tmdcommunication_setting" action="{{ save }}" method="post" data-oc-toggle="ajax">
+				
+					<ul class="nav nav-tabs">
+						<li class="nav-item"><a href="#tab-general" data-bs-toggle="tab" class="nav-link active"><i class="fa fa-cog"></i> {{ tab_general }}</a></li>
+						<li class="nav-item"><a href="#tab-language" data-bs-toggle="tab" class="nav-link"><i class="fa fa-language"></i> {{ tab_language }}</a></li>
+						<li class="nav-item"><a href="#tab-seo" data-bs-toggle="tab" class="nav-link"><i class="fa fa-link"></i> {{ tab_seo }}</a></li>
+					  </ul>
+					  <div class="tab-content">
+						<div id="tab-general" class="tab-pane active">
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label">{{ entry_status }}</label>
+								<div class="col-sm-10">
+									<div class="form-check form-switch form-switch-lg">
+										<input type="hidden" name="module_tmdcommunication_setting_status" value="0"/>
+										<input type="checkbox" name="module_tmdcommunication_setting_status" value="1" id="input-status" class="form-check-input"{% if module_tmdcommunication_setting_status %} checked{% endif %}/>
+									</div>
+								</div>
+							</div>
+
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label" for="input-v_info">{{ entry_v_info }}</label>
+								<div class="col-sm-10">
+								  <select name="module_tmdcommunication_setting_v_info" id="input-v_info" class="form-select">
+									{% if module_tmdcommunication_setting_v_info %}
+									<option value="1" selected="selected">{{ text_yes }}</option>
+									<option value="0">{{ text_no }}</option>
+									{% else %}
+									<option value="1">{{ text_yes }}</option>
+									<option value="0" selected="selected">{{ text_no }}</option>
+									{% endif %}
+								  </select>
+								</div>
+							</div>
+							<div class="row mb-3">
+								<label class="col-sm-2 col-form-label" for="input-c_info">{{ entry_c_info }}</label>
+								<div class="col-sm-10">
+								  <select name="module_tmdcommunication_setting_c_info" id="input-c_info" class="form-select">
+									{% if module_tmdcommunication_setting_c_info %}
+									<option value="1" selected="selected">{{ text_yes }}</option>
+									<option value="0">{{ text_no }}</option>
+									{% else %}
+									<option value="1">{{ text_yes }}</option>
+									<option value="0" selected="selected">{{ text_no }}</option>
+									{% endif %}
+								  </select>
+								</div>
+							</div>
+						</div>
+						<div id="tab-language" class="tab-pane">
+							<div class="float-end">
+								<a class="btn btn-primary" title="{{ button_shortcut }}" data-bs-toggle="modal" data-bs-target="#myModal">
+									<i class="fa fa-bolt"></i> {{ button_shortcut }}
+								</a>
+							</div>
+							<ul class="nav nav-tabs">
+								{% for language in languages %}
+								  <li class="nav-item"><a href="#language-{{ language.language_id }}" data-bs-toggle="tab" class="nav-link{% if loop.first %} active{% endif %}"><img src="{{ language.image }}" title="{{ language.name }}"/> {{ language.name }}</a></li>
+								{% endfor %}
+							</ul>
+							
+							<legend class="allsellers"><i class="fa fa-envelope"></i> {{ tab_setting }}</legend>
+							<div class="tab-content">
+								{% for language in languages %}
+								<div id="language-{{ language.language_id }}" class="tab-pane{% if loop.first %} active{% endif %}">
+									<div class="row mb-3">
+										<label class="col-sm-2 col-form-label">{{ entry_subject }}</label>
+										<div class="col-sm-10">
+										  <input type="text" name="module_tmdcommunication_setting_language[{{ language.language_id }}][v_subject]"  value="{{ module_tmdcommunication_setting_language[language.language_id] ? module_tmdcommunication_setting_language[language.language_id].v_subject }}" placeholder="{{ entry_subject }}" id="input-module_tmdcommunication_setting_language" class="form-control" />
+										</div>
+									</div>
+									<div class="row mb-3">
+										<label class="col-sm-2 col-form-label">{{ entry_admin_email }}</label>
+										<div class="col-sm-10">
+											<textarea class="form-control" data-oc-toggle="ckeditor" data-lang="{{ ckeditor }}" name="module_tmdcommunication_setting_language[{{ language.language_id }}][v_message]" id="description{{ language.language_id }}">{{ module_tmdcommunication_setting_language[language.language_id] ? module_tmdcommunication_setting_language[language.language_id].v_message }}</textarea>
+										</div>
+									</div>
+									
+									<legend class="allsellers"><i class="fa fa-envelope"></i> {{ tab_email }}</legend>
+									
+									<div class="row mb-3">
+										<label class="col-sm-2 col-form-label">{{ entry_subject }}</label>
+										<div class="col-sm-10">
+											<input type="text" name="module_tmdcommunication_setting_language[{{ language.language_id }}][c_subject]"  value="{{ module_tmdcommunication_setting_language[language.language_id] ? module_tmdcommunication_setting_language[language.language_id].c_subject }}" placeholder="{{ entry_subject }}" id="input-module_tmdcommunication_setting_language" class="form-control" />
+										</div>
+									</div>
+									<div class="row mb-3">
+										<label class="col-sm-2 col-form-label">{{ entry_admin_email }}</label>
+										<div class="col-sm-10">
+											<textarea class="form-control" data-oc-toggle="ckeditor" data-lang="{{ ckeditor }}" name="module_tmdcommunication_setting_language[{{ language.language_id }}][c_message]" id="description{{ language.language_id }}">{{ module_tmdcommunication_setting_language[language.language_id] ? module_tmdcommunication_setting_language[language.language_id].c_message }}</textarea>
+										</div>
+									</div>
+								</div>
+								{% endfor %}
+							</div>
+						</div>
+						<div id="tab-seo" class="tab-pane">
+							<div id="product-seo" class="table-responsive overflow-x-auto text-nowrap">
+							 
+								<legend class="allsellers"><i class="fa fa-link"></i> {{ entry_vendorContact }}</legend>
+								<table class="table table-bordered table-hover table-striped">
+								  <thead>
+									<tr>
+									  <td class="text-start">{{ entry_store }}</td>
+									  <td class="text-start">{{ entry_keyword }}</td>
+									</tr>
+								  </thead>
+								  <tbody>
+									{% for store in stores %}
+									  <tr>
+										<td class="text-start">{{ store.name }}</td>
+										<td class="text-start">
+										  {% for language in languages %}
+											<div class="input-group">
+											  <div class="input-group-text"><img src="{{ language.image }}" title="{{ language.name }}"/></div>
+											  <input type="text" name="module_tmdcommunication_setting_seo_url[{{ store.store_id }}][{{ language.language_id }}]" value="{% if module_tmdcommunication_setting_seo_url[store.store_id][language.language_id] %}{{ module_tmdcommunication_setting_seo_url[store.store_id][language.language_id] }}{% endif %}" id="input-keyword-{{ store.store_id }}-{{ language.language_id }}" placeholder="{{ entry_keyword }}" class="form-control"/>
+											</div>
+											<div id="error-keyword-{{ store.store_id }}-{{ language.language_id }}" class="invalid-feedback"></div>
+										  {% endfor %}</td>
+									  </tr>
+									{% endfor %}
+								  </tbody>
+								</table>
+								
+								<legend class="allsellers"><i class="fa fa-link"></i> {{ entry_vendorContactDetails }}</legend>
+								<table class="table table-bordered table-hover table-striped">
+								  <thead>
+									<tr>
+									  <td class="text-start">{{ entry_store }}</td>
+									  <td class="text-start">{{ entry_keyword }}</td>
+									</tr>
+								  </thead>
+								  <tbody>
+									{% for store in stores %}
+									  <tr>
+										<td class="text-start">{{ store.name }}</td>
+										<td class="text-start">
+										  {% for language in languages %}
+											<div class="input-group">
+											  <div class="input-group-text"><img src="{{ language.image }}" title="{{ language.name }}"/></div>
+											  <input type="text" name="module_tmdcommunication_setting_seo_url_details[{{ store.store_id }}][{{ language.language_id }}]" value="{% if module_tmdcommunication_setting_seo_url_details[store.store_id][language.language_id] %}{{ module_tmdcommunication_setting_seo_url_details[store.store_id][language.language_id] }}{% endif %}" id="input-keyword-{{ store.store_id }}-{{ language.language_id }}" placeholder="{{ entry_keyword }}" class="form-control"/>
+											</div>
+											<div id="error-keyword-{{ store.store_id }}-{{ language.language_id }}" class="invalid-feedback"></div>
+										  {% endfor %}</td>
+									  </tr>
+									{% endfor %}
+								  </tbody>
+								</table>
+								
+							</div>
+						</div>
+					</div>
+					
+					
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	<!-- The Modal -->
+	<div class="modal fade tmdcommunication_popup" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+			
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h4 class="modal-title">{{ text_shortcuts }}</h4>
+					<button type="button" class="btn-close btn-close-white opacity-100" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				
+				<!-- Modal Body -->
+				<div class="modal-body">
+					<div class="table-responsive">
+						<table class="table table-bordered table-striped">
+							<tbody>
+								<tr>
+									<th>{contact_name}</th>
+									<td>{{ text_contactname }}</td>
+								</tr>
+								<tr>
+									<th>{customername}</th>
+									<td>{{ text_customername }}</td>
+								</tr>
+								<tr>
+									<th>{product}</th>
+									<td>{{ text_productname }}</td>
+								</tr>
+								<tr>
+									<th>{vendor}</th>
+									<td>{{ text_vendorname }}</td>
+								</tr>
+								<tr>
+									<th>{message}</th>
+									<td>{{ text_message }}</td>
+								</tr>
+								<tr>
+									<th>{date}</th>
+									<td>{{ text_date }}</td>
+								</tr>
+							</tbody>
+						</table>
+						
+					</div>
+				
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script type="text/javascript"><!--
+$('textarea[data-oc-toggle=\'ckeditor\']').ckeditor({
+    language: '{{ ckeditor }}'
+});
+</script>
+
+<style type="text/css">
+.allsellers{background:#f5f5f5; padding:8px;font-size: 18px;}
+
+#form-tmdcommunication_setting legend.allsellers {
+	background: #c3e8ff !important;
+	border-color: #c3e8ff !important;
+	font-size: 16px;
+	color: #000 !important;
+	padding: 0;
+}
+#form-tmdcommunication_setting legend.allsellers i {
+	background: #1C95DE;
+	padding: 15px 10px;
+	font-size: 14px;
+	color: #fff;
+	margin-right: 10px;
+}
+
+#form-tmdcommunication_setting .nav-tabs {
+	gap:2px;
+}
+#form-tmdcommunication_setting .nav-tabs li a {
+    background: #f5f5f5;
+    border-color: #f5f5f5;
+    color: #333;
+    font-weight: 600;
+    border-radius: 0;
+}
+#form-tmdcommunication_setting .nav-tabs li a.active {
+    background: #1C95DE;
+    border-color: #1C95DE;
+    color: #fff;
+}
+.tmdcommunication_popup .modal-header {
+    background: #1C95DE;
+    border-color: #1C95DE;
+    color: #fff;
+}
+</style>
+
+</div>
+{{ footer }}

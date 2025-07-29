@@ -1,0 +1,284 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+      </div>
+      <h1>{{ heading_titleview }}</h1>
+      <ol class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+          <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+    <div class="container-fluid">
+      <div class="success_msg"></div>
+        <div class="card card-default">
+          <div class="card-heading">
+            <h3 class="card-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
+          </div>
+          <div class="card-body messagelist">
+            <div class="content msgsendform">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <td class="box1">{{ description }}</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div style="overflow-x:hidden; max-height: 450px;">
+                          <div class="box2">
+                            <div class="comment-part box2">
+                              <ul class="comment-section list">
+
+                                <!-- All Message Start-->
+                                {% for result in tmdmessage %}
+                                  {% if result.customer_id %}
+                                  <li class="comment user-comment">
+                                    <div class="info">
+                                    </div>
+                                    <p class="message">
+                                      <b>{{ result.message }} <span class="pull-right">{{ result.data_added }}</span></b>
+                                      {% if result.filename %}
+                                      <br/>
+                                      <a href="{{ result.hreflink }}"><strong>{{ text_download }}</strong> </a>
+                                      {% endif %}
+                                    </p>
+                                  </li>
+                                  {% else %}
+                                  <li class="comment author-comment">
+                                    <div class="info">
+                                    </div>
+                                    <p class="message pull-right">
+                                      <b>{{ result.data_added }} <span class="pull-right">{{ result.message }}
+                                      {% if result.filename %}
+                                      <br/>
+                                      <a href="{{ result.hreflink }}"><strong>{{ text_download }}</strong> </a>
+                                      {% endif %}
+                                      </span></b>
+                                    </p>
+                                  </li>
+                                  {% endif %}
+                                {% endfor %}
+                                <!-- All Message End-->
+                              </ul>
+                            </div>
+                          </div>
+                          <div id="messagedetail"></div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="content msgsendform">
+               <div class="table-responsive">
+                  <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <td class="box1">{{ entry_reply }}</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <label>{{ entry_response }}</label>
+                      <textarea name="message" class="form-control" col="40"  rows="10" style=" width: 100%;" id="responsetext"></textarea>
+                      <div id="errormessage"></div>
+                      <input type="hidden" name="inquiry_id" value="{{ inquiry_id }}">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="col-sm-12">
+                <div class="well">
+
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <div class="mb-3">
+                        <label class="col-form-label float-start" for="input-upload">{{ entry_upload }}</label>
+                        <input type="hidden" name="file" value="{{ file }}" placeholder="{{ entry_upload }}" id="input-filename" class="form-control" />
+                        <span class="input-group-btn">
+                        </span>
+                        <button type="button" id="button-upload" style="margin-left:10px;" data-oc-loading-text="{{ text_loading }}" class="btn btn-primary"><i class="fa fa-upload"></i> {{ button_upload }}</button>
+                      </div>
+                    </div>
+                    <div class="col-sm-4">
+                    <div class="button-group">
+                       <input type="button" id="msgsend" style="margin-top:0px; margin-left:-40px;" value="{{ button_submit }}" class="button message col-sm-6" />
+                    </div>    
+                    </div>    
+                  </div>
+
+                </div>
+              </div>
+              
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+</div>
+<link rel="stylesheet" type="text/css" href="{{ HTTPS_CATALOG }}extension/tmdvendorcustomercommunication/catalog/view/stylesheet/vendor/tmdmsg.css">
+{{ footer }}
+<script>
+$(document).on('click', '#msgsend',function(){
+  var noti = ($('.msgsendform input[name=\'notify\']').prop('checked') ? 1 : 0);
+  
+  // Collect all filenames from the hidden inputs
+  var filenamess = [];
+  $('input[name="filenamess[]"]').each(function() {
+    filenamess.push($(this).val());
+  });
+  
+  // Prepare form data
+  var formData = {
+    'message': $('#responsetext').val(),
+    'inquiry_id': $('input[name="inquiry_id"]').val(),
+    'notify': noti,
+    'filename': filenamess
+  };
+
+  // alert(formData);
+
+  
+  $.ajax({
+    url:'index.php?route=extension/tmdvendorcustomercommunication/vendor/message_detail.sendDetailMessage&notify='+noti,
+    data: formData,
+    type:'post',
+    dataType:'json',
+
+    beforeSend: function() {
+        console.log("Before send triggered");
+        $('.success, .warning, .alert, .alert-danger').remove();
+        $('#msgsend').prop('disabled', true).val("Sending...");
+    },
+    complete: function() {
+        console.log("Complete triggered");
+        $('#msgsend').prop('disabled', false).val('{{ button_submit }}');
+        $('.attention').remove();
+    },
+
+    success: function(json) {
+      if (json['error']) {
+        $('#errormessage').html('<div class="alert alert-danger">' + json['error'] + '<button type="button" class="close" data-bs-dismiss="alert">&times;</button></div>');    
+      }
+
+      if (json['success']) {
+        $('.success_msg').html('<div class="alert alert-success">' + json['success'] + '<button type="button" class="close" data-bs-dismiss="alert">&times;</button></div>');    
+        messagedetail(json);
+        $('.msgsendform select').val('');
+        $('#errormessage').html('');
+        $('.alert alert-success').html('');
+        $('.msgsendform input[name=\'notify\']').attr('checked', false);
+        $('#responsetext').val('');
+        // Clear uploaded files after successful send
+        $('.upfle').remove();
+        // Reload page after 1.5 seconds
+        setTimeout(function() {
+          location.reload();
+        }, 1500);
+      }
+    }
+  });
+});
+
+function messagedetail(json){
+  html='';
+  html+='<div class="box2">';
+  html+='<ul class="comment-section">';
+  html+='<li class="comment author-comment">';
+  html+='<div class="info">'; 
+  html+='</div>';
+  html+='<p class="message pull-right"><b>'+json['date_added']+'</b><b><span class="pull-right">'+json['message']+'</b>';
+  if(json['filenamess']) {
+  html+='<br/>';
+  html+='<a href="'+json['hreflink']+'" class="pull-right"><strong>{{ text_download }} </strong> </a>';
+  }
+  html+='</span></p>';
+  html+='</li>';
+  html+='</ul>';
+  html+='</div>';
+  $('#messagedetail').append(html);
+}
+</script>
+<script type="text/javascript"><!--
+var image_row = 0;
+    $('#button-upload').on('click', function() {
+  $('#form-upload').remove();
+
+  $('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" /></form>');
+
+  $('#form-upload input[name=\'file\']').trigger('click');
+
+  if (typeof timer != 'undefined') {
+      clearInterval(timer);
+  }
+
+
+var filenames = [];
+   timer = setInterval(function() {
+    if ($('#form-upload input[name=\'file\']').val() != '') {
+      clearInterval(timer);
+
+      $.ajax({
+        {% if(VERSION2>='4.0.2.0') %}
+        url: 'index.php?route=extension/tmdvendorcustomercommunication/vendor/message_detail.upload',
+        {% else %}
+        url: 'index.php?route=extension/tmdvendorcustomercommunication/vendor/message_detail|upload',
+        {% endif %}
+        type: 'post',
+        dataType: 'json',
+        data: new FormData($('#form-upload')[0]),
+        cache: false,
+        contentType: false,
+        processData: false,
+        beforeSend: function() {
+          $('#button-upload').button('loading');
+        },
+        complete: function() {
+          $('#button-upload').button('reset');
+        },
+        success: function(json) {
+          if (json['error']) {
+            alert(json['error']);
+          }
+
+          if (json['success']){
+            alert(json['success']);
+         
+             var html = '<div class="input-group upfle" id="upfle' + image_row + '">' +
+                            '<input type="text" name="filename[]" rel="'+ json['filenames']+'"value="' + json['filenames'] + '" id="input-filename' + image_row + '" class="form-control" /><input type="hidden" name="filenamess[]" rel="'+ json['filenames']+'"value="' + json['filename'] + '" id="input-filename' + image_row + '" class="form-control" />' +
+                            '<span class="input-group-btn">' +
+                            '<i class="fa fa-times removefile" data-row="' + image_row + '" style="color:red; font-size:20px; margin-top:5px; cursor:pointer;"></i>' +
+                            '</span></div>';
+
+                        $("#button-upload").after(html);
+
+                  image_row++;
+    $(document).on('click', '.removefile', function() {
+    var row = $(this).data('row');
+    $('#upfle' + row).remove();
+});
+
+          
+          }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+          alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+      });
+    }
+  }, 500);
+});
+ 
+
+//--></script>
+
